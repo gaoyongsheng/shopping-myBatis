@@ -1,13 +1,29 @@
 package com.shopping.demo.service.impl;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import com.github.pagehelper.PageInfo;
+import com.shopping.demo.cro.PageRequest;
+import com.shopping.demo.cro.PageResult;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class AbstractBaseImpl {
+
+    /**
+     * 将分页信息封装到统一的接口
+     * @param pageRequest
+     * @param pageInfo
+     * @return
+     */
+    public PageResult getPageResult(PageRequest pageRequest, PageInfo<?> pageInfo){
+        PageResult pageResult = new PageResult();
+        pageResult.setPageNum(pageInfo.getPageNum());
+        pageResult.setPageSize(pageInfo.getPageSize());
+        pageResult.setTotalSize((int) pageInfo.getTotal());
+        pageResult.setTotalPages(pageInfo.getPages());
+        pageResult.setData(pageInfo.getList());
+        return pageResult;
+    }
     
     /**
      * @Author ldc
@@ -18,21 +34,6 @@ public class AbstractBaseImpl {
      */
     public Long strToLong(String str){return Long.parseLong(str);}
 
-    /**
-     * 获取pageAble
-     * @Param page 页码，当前第几页
-     * */
-    public Pageable getPageable(int page, int size){
-        Pageable pageable = PageRequest.of(page,size);
-
-        return pageable;
-    }
-
-    public Pageable getPageable(int page, int size, Sort sort){
-        Pageable pageable = PageRequest.of(page,size,sort);
-
-        return pageable;
-    }
 
     /**
      * @Author ldc

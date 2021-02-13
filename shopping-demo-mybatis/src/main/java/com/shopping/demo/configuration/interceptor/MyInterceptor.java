@@ -1,10 +1,8 @@
 package com.shopping.demo.configuration.interceptor;
 
 import com.shopping.demo.constants.ShopExceptionCode;
-import com.shopping.demo.entity.OperLog;
 import com.shopping.demo.entity.User;
 import com.shopping.demo.exception.MyShopException;
-import com.shopping.demo.repository.OperLogRepository;
 import com.shopping.demo.service.UserService;
 import com.shopping.demo.utils.*;
 import org.slf4j.Logger;
@@ -16,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class MyInterceptor implements HandlerInterceptor {
 
@@ -23,8 +22,6 @@ public class MyInterceptor implements HandlerInterceptor {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private OperLogRepository operLogRepository;
 
     /*{
         content-type:application/json,
@@ -56,14 +53,13 @@ public class MyInterceptor implements HandlerInterceptor {
                 ThreadLocalUtils.set(curUser);
                 return true;
             } else {
-                throw new MyShopException(ShopExceptionCode.SIGNATURE_ERROR,"签名错误");
+                return errorWrite(response,ShopExceptionCode.SIGNATURE_ERROR);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendError(500);
-            ResponseUtils.failure(ShopExceptionCode.SIGNATURE_ERROR,"签名错误");
-            return false;
+//            response.sendError(500);
+            return errorWrite(response,ShopExceptionCode.SIGNATURE_ERROR);
         }
 
     }
@@ -76,27 +72,25 @@ public class MyInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception ex) throws Exception {
         LOG.info("afterCompletion");
-        User userDto = (User) ThreadLocalUtils.get();
-        String code = CodeThreadLocal.get();
-        String reqData = Util.getReqBodyStrByHeader(request);
-        String apiInterface = request.getRequestURL().toString();
-        String apiDescription = "";
-//        if (object instanceof HandlerMethod) {
-//            HandlerMethod handler = (HandlerMethod) object;
-//            apiDescription = handler.getMethodAnnotation(ApiOperation.class).value();
-//        }
-        OperLog operLog = new OperLog();
-        operLog.setUserId(userDto.getId());
-        operLog.setUserName(userDto.getUserName());
-        operLog.setTrueName(userDto.getTrueName());
-        operLog.setMobileNum(userDto.getMobileNum());
-        operLog.setApiInterface(apiInterface);
-        operLog.setApiDescription(apiDescription);
-        operLog.setRetCode(code);
-        operLog.setReqData(reqData.length() > 65535 ? "新闻内容长度过长，不做存储" : reqData);
-        operLog.setReqTime(DateTimeUtils.stampToDate(System.currentTimeMillis()+""));
-        operLogRepository.save(operLog);
 
+    }
+
+    /**
+     * 错误拦截处理.
+     *
+     * @param resp      返回对象.
+     * @param errorCode 错误码
+     * @return false
+     * @throws IOException
+     * @author BianJiashuai
+     * @date 2018年7月6日 下午8:25:16
+     */
+    private boolean errorWrite(HttpServletResponse resp, String errorCode) throws IOException {
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=utf-8");
+        PrintWriter pw = resp.getWriter();
+        pw.write(ResponseUtils.failure(errorCode,"签名错误").toString());
+        return false;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.shopping.demo.controller;
 
 import com.shopping.demo.cro.AddressCro;
-import com.shopping.demo.exception.MyShopException;
 import com.shopping.demo.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,22 +28,16 @@ public class AddressController extends AbstractBaseCtrl {
         return success(addressService.findAllAddress(userId));
     }
 
-    @PostMapping("/address.delete")
-    public Object deleteAddress(@RequestBody AddressCro addressCro){
-        try{
-            addressService.deleteAddress(addressCro.toDto());
-            return success("");
-        } catch (MyShopException ex){
-            return failure(ex.getErrorCode(),ex.getMessage());
-        }
+    @GetMapping("/address.delete")
+    public Object deleteAddress(@RequestParam("id") Long id){
+        addressService.deleteAddress(id);
+        return success("");
     }
 
     @PostMapping("/address.edit")
     public Object editAddress(@RequestBody AddressCro addressCro){
-        try{
-            return success(addressService.editAddress(addressCro.toDto()));
-        } catch (MyShopException ex){
-            return failure(ex.getErrorCode(),ex.getMessage());
-        }
+
+        return success(addressService.editAddress(addressCro.toDto()));
+
     }
 }

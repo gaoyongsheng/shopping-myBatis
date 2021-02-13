@@ -18,7 +18,6 @@ public class AddressDto extends BaseDto {
 
     private String addrDetail;
 
-    //    private User user;
     private Long addrUserId;
 
     public Long getId() {
@@ -85,13 +84,6 @@ public class AddressDto extends BaseDto {
         this.addrUserId = addrUserId;
     }
 
-//    public User getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
 
     @Override
     public String toString() {

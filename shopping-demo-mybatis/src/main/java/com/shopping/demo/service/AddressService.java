@@ -46,7 +46,7 @@ public interface AddressService {
      * @Param [address]
      * @return com.shopping.demo.entity.Address
      */
-    Address editAddress(AddressDto addressDto);
+    boolean editAddress(AddressDto addressDto);
     
     /**
      * @Author ldc
@@ -55,6 +55,6 @@ public interface AddressService {
      * @Param [address]
      * @return void
      */
-    void deleteAddress(AddressDto addressDto);
+    void deleteAddress(Long id);
 
 }

@@ -1,12 +1,14 @@
 package com.shopping.demo.controller;
 
-import com.shopping.demo.cro.OrderCreateCro;
-import com.shopping.demo.cro.OrderPageConditionCro;
-import com.shopping.demo.cro.OrderPageCro;
+import com.shopping.demo.cro.OrderCro;
+import com.shopping.demo.cro.PageRequest;
 import com.shopping.demo.exception.MyShopException;
-import com.shopping.demo.service.OrderService;
+import com.shopping.demo.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @Author ldc
@@ -19,45 +21,23 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController extends AbstractBaseCtrl {
 
     @Autowired
-    OrderService orderService;
+    OrdersService orderService;
 
     @PostMapping("/orders.create")
-    public Object createOrders(@RequestBody OrderCreateCro orderCreateCro){
+    public Object createOrders(@RequestBody OrderCro orderCreateCro){
         try{
-            return success(orderService.createOrder(orderCreateCro));
-        } catch (MyShopException ex){
-            return failure(ex.getErrorCode(),ex.getMessage());
-        }
-
-    }
-
-    @GetMapping("/order.findById/{id}")
-    public Object findOrderById(@PathVariable("id") Long id){
-        try{
-            return success(orderService.findOrderById(id));
-        } catch (MyShopException ex){
-            return failure(ex.getErrorCode(),ex.getMessage());
-        }
-    }
-
-    @PostMapping("/order.findAll")
-    public Object findOrdersAll(@RequestBody OrderPageCro orderPageCro){
-        return success(getData(orderService.findAllOrders(orderPageCro)));
-    }
-
-    @DeleteMapping("order.delete/{id}")
-    public Object deleteOrder(@PathVariable("id") Long id){
-        try{
-            orderService.deleteOrder(id);
+            orderService.insertOrders(orderCreateCro);
             return success("");
         } catch (MyShopException ex){
             return failure(ex.getErrorCode(),ex.getMessage());
         }
+
     }
 
-    @PostMapping("/order.find.condition")
-    public Object findOnCondition(@RequestBody OrderPageConditionCro orderPageConditionCro){
-        return success(getData(orderService.findAllWitnCondition(orderPageConditionCro)));
+    @PostMapping("/order.findAll")
+    public Object findOrdersAll(@RequestBody PageRequest pageQuery){
+        return success(orderService.findAllGoods(pageQuery));
     }
+
 
 }

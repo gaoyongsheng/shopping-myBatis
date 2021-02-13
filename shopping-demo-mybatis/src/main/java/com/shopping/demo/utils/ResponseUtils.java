@@ -23,7 +23,6 @@ public class ResponseUtils {
         }
 
         LOG.info("************responseBody**************[{}]",jsonObject.toString());
-        CodeThreadLocal.set("0");
 
         return jsonObject;
     }
@@ -35,7 +34,6 @@ public class ResponseUtils {
         jsonObject.put("data","");
 
         LOG.info("************responseBody**************[{}]",jsonObject.toString());
-        CodeThreadLocal.set(code);
 
         return jsonObject;
     }

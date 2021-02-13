@@ -1,12 +1,11 @@
 package com.shopping.demo.controller;
 
-import com.shopping.demo.cro.GoodsAllCro;
 import com.shopping.demo.cro.GoodsCro;
+import com.shopping.demo.cro.PageRequest;
 import com.shopping.demo.entity.Goods;
 import com.shopping.demo.exception.MyShopException;
 import com.shopping.demo.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,9 +45,13 @@ public class GoodsController extends AbstractBaseCtrl {
     }
 
     @PostMapping("/goods.findAll")
-    public Object findGoodsAll(@RequestBody GoodsAllCro goodsAllCro){
-        Page<Goods> pageGoods =  goodsService.findAllGoods(goodsAllCro);
-        return success(getData(pageGoods));
+    public Object findGoodsAll(@RequestBody PageRequest pageQuery){
+        return success(goodsService.findAllGoods(pageQuery));
+    }
+
+    @GetMapping("/goods.findAllByUserId")
+    public Object findGoodsAllByUserId(@RequestBody PageRequest pageQuery,@RequestParam("userId") Long userId){
+        return success(goodsService.getGoodsByUserId(pageQuery,userId));
     }
 
     @DeleteMapping("/goods.deleteById/{id}")
@@ -62,16 +65,17 @@ public class GoodsController extends AbstractBaseCtrl {
 
     }
 
-//    @DeleteMapping("/goods.deleteAll")
-//    public Object deleteGoodsList(@RequestBody List<GoodsCro> goodsCroList){
-//        goodsService.deleteListGoods(goodsCroList);
-//        return success("");
-//    }
+    @DeleteMapping("/goods.deleteListGoods")
+    public Object deleteListGoods(@RequestBody List<Long> goodsIdList){
+        goodsService.deleteListGoods(goodsIdList);
+        return success("");
+    }
 
     @PutMapping("/goods.edit")
     public Object editGoods(@RequestBody GoodsCro goodsCro){
         try{
-            return success(goodsService.editGoods(goodsCro));
+            goodsService.editGoods(goodsCro);
+            return success("");
         } catch (MyShopException ex){
             return failure(ex.getErrorCode(),ex.getMessage());
         }

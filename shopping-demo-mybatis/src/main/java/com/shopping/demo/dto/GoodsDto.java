@@ -22,8 +22,6 @@ public class GoodsDto extends BaseDto {
 
     private String goodsSalesCount;
 
-    private List<FilesRes> goodsTitleImage;
-
     private String goodsDetailText;
 
     private String goodsAddTime;
@@ -70,14 +68,6 @@ public class GoodsDto extends BaseDto {
         this.goodsSalesCount = goodsSalesCount;
     }
 
-    public List<FilesRes> getGoodsTitleImage() {
-        return goodsTitleImage;
-    }
-
-    public void setGoodsTitleImage(List<FilesRes> goodsTitleImage) {
-        this.goodsTitleImage = goodsTitleImage;
-    }
-
     public String getGoodsDetailText() {
         return goodsDetailText;
     }
@@ -110,7 +100,6 @@ public class GoodsDto extends BaseDto {
                 ", goodsPrice='" + goodsPrice +
                 ", goodsInventoryCount='" + goodsInventoryCount +
                 ", goodsSalesCount='" + goodsSalesCount +
-                ", goodsTitleImage=" + goodsTitleImage +
                 ", goodsDetailText='" + goodsDetailText +
                 ", goodsDetailImage=" + goodsDetailImage +
                 ", goodsAddTime=" + goodsAddTime +

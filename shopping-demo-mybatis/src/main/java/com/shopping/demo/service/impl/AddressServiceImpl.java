@@ -5,7 +5,7 @@ import com.shopping.demo.dto.AddressDto;
 import com.shopping.demo.entity.Address;
 import com.shopping.demo.entity.User;
 import com.shopping.demo.exception.MyShopException;
-import com.shopping.demo.repository.AddressRepository;
+import com.shopping.demo.mapper.AddressMapper;
 import com.shopping.demo.service.AddressService;
 import com.shopping.demo.utils.ThreadLocalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,22 +25,22 @@ import java.util.List;
 public class AddressServiceImpl extends AbstractBaseImpl implements AddressService {
 
     @Autowired
-    AddressRepository addressRepository;
+    AddressMapper addressMapper;
 
     @Override
     public void createAddress(AddressDto addressDto) {
         addressDto.setAddrUserId(((User) ThreadLocalUtils.get()).getId());
-        addressRepository.save(new Address(addressDto));
+        addressMapper.insertAddress(new Address(addressDto));
     }
 
     @Override
     public List<Address> findAllAddress(Long UserId) {
-        return addressRepository.findAddressesByAddrUserId(UserId);
+        return addressMapper.getAddressByUserId(UserId);
     }
 
     @Override
     public Address findAddressById(Long id) {
-        Address address = addressRepository.findAddressById(id);
+        Address address = addressMapper.getAddressById(id);
         if(null == address){
             throw new MyShopException(ShopExceptionCode.ENTITY_NO_EXISTS,"实体对象不存在");
         }
@@ -48,7 +48,7 @@ public class AddressServiceImpl extends AbstractBaseImpl implements AddressServi
     }
 
     @Override
-    public Address editAddress(AddressDto addressDto) {
+    public boolean editAddress(AddressDto addressDto) {
         Address address = findAddressById(addressDto.getId());
 
         address.setAddrUser(addressDto.getAddrUser());
@@ -58,13 +58,14 @@ public class AddressServiceImpl extends AbstractBaseImpl implements AddressServi
         address.setAddrCounty(addressDto.getAddrCounty());
         address.setAddrDetail(addressDto.getAddrDetail());
 
-        return address;
+        return addressMapper.updateAddress(address);
+
     }
 
     @Override
-    public void deleteAddress(AddressDto addressDto) {
-        if(null != findAddressById(addressDto.getId())){
-            addressRepository.delete(new Address(addressDto));
+    public void deleteAddress(Long id) {
+        if(null != findAddressById(id)){
+            addressMapper.deleteAddress(id);
         }
     }
 

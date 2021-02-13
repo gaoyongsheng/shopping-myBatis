@@ -1,13 +1,8 @@
 package com.shopping.demo.entity;
 
-import com.shopping.demo.constants.DaoConstant;
 import com.shopping.demo.dto.OrderDto;
 import com.shopping.demo.entity.base.BaseModel;
 import lombok.Data;
-
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @Author ldc
@@ -15,57 +10,51 @@ import java.util.Set;
  * @Version 1.0
  */
 
-@Entity
-@Table(name = DaoConstant.ORDERS_TABLE_NAME)
 @Data
 public class Order extends BaseModel<OrderDto> {
 
-    @Column(name = DaoConstant.ORDERS_CODE)
+    private Long id;
+
     private String orderCode;
 
-    @Column(name = DaoConstant.ORDERS_STATUS)
     private String orderStatus;
 
-    @Column(name = DaoConstant.ORDERS_TOTAL_PRICE)
     private String orderTotalPrice;
 
-//    @Column(name = DaoConstant.ORDERS_USER_ID)
-//    private String orderUserId;
-
-    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
-    @JoinColumn(name = DaoConstant.ORDERS_USER_ID)
-    private User user;
-
-    @ManyToOne(cascade = CascadeType.REFRESH,fetch = FetchType.EAGER)
-    @JoinColumn(name = DaoConstant.ORDERS_ADDRESS_ID)
-    private Address address;
-
-    @Column(name = DaoConstant.ORDERS_ADD_TIME)
     private String orderAddTime;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name = DaoConstant.ORDERS_SHOP_CART_ID)
-    private Set<ShopCart> shopCartList = new HashSet<ShopCart>();
+    private Long goodsId;
+
+    private Long orderUserId;
+
+    private Long orderAddressId;
 
     public Order(){}
 
-//    public Order(OrderDto orderDto){
-//        this.orderCode = orderDto.getOrderCode();
-//        this.orderStatus = orderDto.getOrderStatus();
-//        this.orderTotalPrice = orderDto.getOrderTotalPrice();
-//        this.orderAddTime = orderDto.getOrderAddTime();
-//    }
+    public Order(OrderDto orderDto){
+        this.id = orderDto.getId();
+        this.orderCode = orderDto.getOrderCode();
+        this.orderStatus = orderDto.getOrderStatus();
+        this.orderTotalPrice = orderDto.getOrderTotalPrice();
+        this.orderAddTime = orderDto.getOrderAddTime();
+        this.orderUserId = orderDto.getOrderUserId();
+        this.orderAddressId = orderDto.getOrderAddressId();
+        this.goodsId = orderDto.getGoodsId();
+    }
 
 
 
     @Override
     public OrderDto toDto() {
-//        OrderDto orderDto = new OrderDto();
-//        orderDto.setId(id);
-//        orderDto.setOrderCode(orderCode);
-//        orderDto.setOrderStatus(orderStatus);
-//        orderDto.setOrderTotalPrice(orderTotalPrice);
-//        orderDto.setOrderAddTime(orderAddTime);
-        return null;
+        OrderDto orderDto = new OrderDto();
+        orderDto.setId(id);
+        orderDto.setOrderCode(orderCode);
+        orderDto.setOrderStatus(orderStatus);
+        orderDto.setOrderTotalPrice(orderTotalPrice);
+        orderDto.setOrderAddTime(orderAddTime);
+        orderDto.setOrderUserId(orderUserId);
+        orderDto.setOrderAddressId(orderAddressId);
+        orderDto.setGoodsId(goodsId);
+        return orderDto;
     }
 }

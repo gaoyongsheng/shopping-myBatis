@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shopping.demo.mapper.FilesResMapper">
+
+    <!-- 批量添加图片 -->
+    <insert id="insertFilesByList" parameterType="java.util.List">
+        insert into fileres (fileId,fileResPath,fileResFormat,fileGoodsId)
+        values
+        <foreach collection="list" item="FilesRes" separator=",">
+            (#{FilesRes.fileId},#{FilesRes.fileResPath},#{FilesRes.fileResFormat},#{FilesRes.fileGoodsId})
+        </foreach>
+    </insert>
+
+    <!-- 单个图片修改 -->
+    <update id="updateFiles" parameterType="FilesRes">
+         update fileres
+         <set>
+             <if test="fileResPath != null and fileResPath != ''">
+                 fileResPath = #{fileResPath}
+             </if>
+         </set>
+    </update>
+
+    <!-- 根据图片ID删除出片 -->
+    <delete id="deleteFilesByFilesId" parameterType="Long">
+        delete from fileres where id = #{id}
+    </delete>
+
+    <!-- 批量删除某个商品的图片 -->
+    <delete id="deleteFilesByList" parameterType="Long">
+        delete from fileres where fileGoodsId = #{fileGoodsId}
+    </delete>
+
+    <!-- 根据商品ID查询图片 -->
+    <select id="getFilesResByGoodsId" parameterType="Long" resultType="FilesRes">
+        select * from fileres where id = #{id}
+    </select>
+
+</mapper>

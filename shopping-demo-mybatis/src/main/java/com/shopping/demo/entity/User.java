@@ -1,14 +1,9 @@
 package com.shopping.demo.entity;
 
 
-import com.shopping.demo.constants.DaoConstant;
 import com.shopping.demo.dto.UserDto;
 import com.shopping.demo.entity.base.BaseModel;
 import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * @Author Gao
@@ -16,41 +11,28 @@ import javax.persistence.Table;
  * @Version 1.0
  */
 
-@Entity
-@Table(name = DaoConstant.USER_TABLE_NAME)
 @Data
 public class User extends BaseModel<UserDto> {
 
-    @Column(name = DaoConstant.USER_USERNAME)
+    private Long id;
+
     private String userName;
 
-    @Column(name = DaoConstant.USER_TRUE_NAME)
     private String trueName;
 
-    @Column(name = DaoConstant.USER_PASSWORD)
     private String password;
 
-    @Column(name = DaoConstant.USER_EMAIL)
     private String email;
 
-    @Column(name = DaoConstant.USER_MOBILE_NUM)
     private String mobileNum;
 
-    @Column(name = DaoConstant.USER_AVATAR_ADDR)
     private String avatarAddress;
 
-    @Column(name = DaoConstant.USER_SEX)
     private String sex;
 
-    @Column(name = DaoConstant.USER_ADD_TIME)
     private String addTime;
 
-    @Column(name = DaoConstant.USER_ROLE)
     private String userRole;
-
-//    @OneToMany(cascade={CascadeType.REFRESH,CascadeType.MERGE,CascadeType.REMOVE},fetch = FetchType.EAGER)
-//    @JoinColumn(name = DaoConstant.ADDRESS_USER_ID)
-//    private Set<Address> addrList = new HashSet<Address>();
 
     public User(){}
 

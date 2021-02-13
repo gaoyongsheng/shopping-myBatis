@@ -23,8 +23,6 @@ public class GoodsCro extends BaseCro {
 
     private String goodsSalesCount;
 
-    private List<FilesRes> goodsTitleImage;
-
     private String goodsDetailText;
 
     private String goodsAddTime;
@@ -38,7 +36,6 @@ public class GoodsCro extends BaseCro {
         goodsDto.setGoodsPrice(goodsPrice);
         goodsDto.setGoodsInventoryCount(goodsInventoryCount);
         goodsDto.setGoodsSalesCount(goodsSalesCount);
-        goodsDto.setGoodsTitleImage(goodsTitleImage);
         goodsDto.setGoodsDetailText(goodsDetailText);
         goodsDto.setGoodsDetailImage(goodsDetailImage);
         goodsDto.setGoodsAddTime(goodsAddTime);
@@ -83,14 +80,6 @@ public class GoodsCro extends BaseCro {
 
     public void setGoodsSalesCount(String goodsSalesCount) {
         this.goodsSalesCount = goodsSalesCount;
-    }
-
-    public List<FilesRes> getGoodsTitleImage() {
-        return goodsTitleImage;
-    }
-
-    public void setGoodsTitleImage(List<FilesRes> goodsTitleImage) {
-        this.goodsTitleImage = goodsTitleImage;
     }
 
     public String getGoodsDetailText() {

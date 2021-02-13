@@ -1,41 +1,26 @@
 package com.shopping.demo.entity;
 
 
-import com.shopping.demo.constants.DaoConstant;
 import com.shopping.demo.dto.AddressDto;
 import com.shopping.demo.entity.base.BaseModel;
 import lombok.Data;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = DaoConstant.ADDRESS_TABLE_NAME)
-@Data
 public class Address extends BaseModel<AddressDto> {
 
-    @Column(name = DaoConstant.ADDRESS_NAME)
+    private Long id;
+
     private String addrUser;
 
-    @Column(name = DaoConstant.ADDRESS_MOBILE)
     private String addrMobile;
 
-    @Column(name = DaoConstant.ADDRESS_PROVINCE)
     private String addrProvince;
 
-    @Column(name = DaoConstant.ADDRESS_CITY)
     private String addrCity;
 
-    @Column(name = DaoConstant.ADDRESS_COUNTY)
     private String addrCounty;
 
-    @Column(name = DaoConstant.ADDRESS_DETAIL)
     private String addrDetail;
-//    mappedBy标签一定是定义在被拥有方的（被控方），他指向拥有方，表示此表是关系中的从表，mappedBy = "idCard"，值是主表中的属性
-//    @ManyToOne(cascade = {CascadeType.REFRESH},fetch = FetchType.EAGER)
-//    @JoinColumn(name = DaoConstant.ADDRESS_USER_ID)
-//    private User user;
 
-    @Column(name = DaoConstant.ADDRESS_USER_ID)
     private Long addrUserId;
 
     public Address(){}
@@ -61,7 +46,6 @@ public class Address extends BaseModel<AddressDto> {
         addressDto.setAddrCity(addrCity);
         addressDto.setAddrCounty(addrCounty);
         addressDto.setAddrDetail(addrDetail);
-//        addressDto.setUser(user);
         return addressDto;
     }
 
@@ -78,5 +62,69 @@ public class Address extends BaseModel<AddressDto> {
                 ", addrDetail='" + addrDetail +
                 ", addrUserId='" + addrUserId +
                 '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAddrUser() {
+        return addrUser;
+    }
+
+    public void setAddrUser(String addrUser) {
+        this.addrUser = addrUser;
+    }
+
+    public String getAddrMobile() {
+        return addrMobile;
+    }
+
+    public void setAddrMobile(String addrMobile) {
+        this.addrMobile = addrMobile;
+    }
+
+    public String getAddrProvince() {
+        return addrProvince;
+    }
+
+    public void setAddrProvince(String addrProvince) {
+        this.addrProvince = addrProvince;
+    }
+
+    public String getAddrCity() {
+        return addrCity;
+    }
+
+    public void setAddrCity(String addrCity) {
+        this.addrCity = addrCity;
+    }
+
+    public String getAddrCounty() {
+        return addrCounty;
+    }
+
+    public void setAddrCounty(String addrCounty) {
+        this.addrCounty = addrCounty;
+    }
+
+    public String getAddrDetail() {
+        return addrDetail;
+    }
+
+    public void setAddrDetail(String addrDetail) {
+        this.addrDetail = addrDetail;
+    }
+
+    public Long getAddrUserId() {
+        return addrUserId;
+    }
+
+    public void setAddrUserId(Long addrUserId) {
+        this.addrUserId = addrUserId;
     }
 }

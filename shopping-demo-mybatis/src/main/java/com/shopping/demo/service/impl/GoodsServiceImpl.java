@@ -1,20 +1,21 @@
 package com.shopping.demo.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.shopping.demo.constants.ShopExceptionCode;
-import com.shopping.demo.cro.GoodsAllCro;
 import com.shopping.demo.cro.GoodsCro;
+import com.shopping.demo.cro.PageRequest;
+import com.shopping.demo.cro.PageResult;
 import com.shopping.demo.entity.FilesRes;
 import com.shopping.demo.entity.Goods;
 import com.shopping.demo.entity.User;
 import com.shopping.demo.exception.MyShopException;
-import com.shopping.demo.repository.GoodsRepository;
-import com.shopping.demo.service.FilesResService;
+import com.shopping.demo.mapper.FilesResMapper;
+import com.shopping.demo.mapper.GoodsMapper;
 import com.shopping.demo.service.GoodsService;
 import com.shopping.demo.utils.DateTimeUtils;
 import com.shopping.demo.utils.ThreadLocalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,76 +33,61 @@ import java.util.List;
 public class GoodsServiceImpl extends AbstractBaseImpl implements GoodsService{
 
     @Autowired
-    GoodsRepository goodsRepository;
+    GoodsMapper goodsMapper;
 
     @Autowired
-    FilesResService filesResService;
+    FilesResMapper filesResMapper;
 
     @Override
     public void addOneGoods(GoodsCro goodsCro) {
+
         Goods goods = new Goods(goodsCro.toDto());
-        User curUser = (User)ThreadLocalUtils.get();
+        User curUser = (User) ThreadLocalUtils.get();
         goods.setGoodsUserId(curUser.getId());
         goods.setGoodsAddTime(DateTimeUtils.getSysCurDate());
 
-        List<FilesRes> titleImgList = filesResService.saveFileRes(goods.getGoodsTitleImage());
-        List<FilesRes> detailImgList = filesResService.saveFileRes(goods.getGoodsDetailImage());
+        goodsMapper.insertGoods(goods);
 
-        goods.setGoodsTitleImage(titleImgList);
-        goods.setGoodsDetailImage(detailImgList);
+        Long goodsId = goods.getId();
 
-        goodsRepository.save(goods);
-
+        List<FilesRes> curFileList = goods.getGoodsDetailImage();
+        for (FilesRes filesRes : curFileList){
+            filesRes.setFileGoodsId(goodsId);
+        }
+        filesResMapper.insertFilesByList(curFileList);
     }
 
     @Override
     public void addListGoods(List<GoodsCro> goodsCroList) {
-        List<Goods> goodsList = new ArrayList<Goods>();
         for(GoodsCro goodsCro : goodsCroList){
-            Goods goods = new Goods(goodsCro.toDto());
-            User curUser = (User)ThreadLocalUtils.get();
-            goods.setGoodsUserId(curUser.getId());
-            goods.setGoodsAddTime(DateTimeUtils.getSysCurDate());
-
-            List<FilesRes> titleImgList = filesResService.saveFileRes(goods.getGoodsTitleImage());
-            List<FilesRes> detailImgList = filesResService.saveFileRes(goods.getGoodsDetailImage());
-
-            goods.setGoodsTitleImage(titleImgList);
-            goods.setGoodsDetailImage(detailImgList);
-
-            goodsList.add(goods);
+            addOneGoods(goodsCro);
         }
-        goodsRepository.saveAll(goodsList);
     }
 
     @Override
     public void deleteGoodsById(Long id) {
         Goods curGoods = findGoodsById(id);
-        List<FilesRes> titleImgList = curGoods.getGoodsTitleImage();
         List<FilesRes> detailImgList = curGoods.getGoodsDetailImage();
 
-        filesResService.deleteFilesRes(titleImgList);
-        filesResService.deleteFilesRes(detailImgList);
+        filesResMapper.deleteFilesByList(id);
 
-        goodsRepository.deleteById(id);
+        goodsMapper.deleteGoodsById(id);
     }
 
     @Override
-    public void deleteListGoods(List<GoodsCro> goodsCroList) {
-        List<Goods> goodsList = new ArrayList<Goods>();
-        for(GoodsCro goodsCro : goodsCroList){
-            Goods goods = new Goods(goodsCro.toDto());
-            User curUser = (User)ThreadLocalUtils.get();
-            goods.setGoodsUserId(curUser.getId());
-            goods.setGoodsAddTime(DateTimeUtils.getSysCurDate());
-            goodsList.add(goods);
+    public void deleteListGoods(List<Long> goodsIdList) {
+
+        for(Long id : goodsIdList){
+            filesResMapper.deleteFilesByList(id);
         }
-        goodsRepository.deleteAll(goodsList);
+        goodsMapper.deleteGoodsList(goodsIdList);
+
     }
+
 
     @Override
     public Goods findGoodsById(Long id) {
-        Goods curGoods = goodsRepository.findGoodsById(id);
+        Goods curGoods = goodsMapper.getGoodsById(id);
         if(null == curGoods){
             throw new MyShopException(ShopExceptionCode.ENTITY_NO_EXISTS,"实体对象不存在");
         }
@@ -109,16 +95,29 @@ public class GoodsServiceImpl extends AbstractBaseImpl implements GoodsService{
     }
 
     @Override
-    public Page<Goods> findAllGoods(GoodsAllCro goodsAllCro) {
-        Pageable pageable = getPageable(goodsAllCro.getOffset(),goodsAllCro.getPageSize());
-        Page<Goods> page = goodsRepository.findAll(pageable);
-        return page;
+    public PageResult findAllGoods(PageRequest pageRequest) {
+        int pageNum = pageRequest.getPageNum();
+        int pageSize = pageRequest.getPageSize();
+        PageHelper.startPage(pageNum,pageSize);
+        List<Goods> goodsList = goodsMapper.getGoods();
+        return getPageResult(pageRequest,new PageInfo<Goods>(goodsList));
     }
 
     @Override
-    public Goods editGoods(GoodsCro goodsCro) {
+    public PageResult getGoodsByUserId(PageRequest pageRequest, Long userId) {
+        int pageNum = pageRequest.getPageNum();
+        int pageSize = pageRequest.getPageSize();
+        PageHelper.startPage(pageNum,pageSize);
+        List<Goods> goodsList = goodsMapper.getGoodsByUserId(userId);
+        return getPageResult(pageRequest,new PageInfo<Goods>(goodsList));
+    }
 
-        Goods curGoods = new Goods(goodsCro.toDto());
+
+    @Override
+    public void editGoods(GoodsCro goodsCro) {
+
+        Long curGoodsId = goodsCro.getId();
+        Goods curGoods = findGoodsById(curGoodsId);
 
         curGoods.setGoodsName(goodsCro.getGoodsName());
         curGoods.setGoodsPrice(goodsCro.getGoodsPrice());
@@ -126,12 +125,6 @@ public class GoodsServiceImpl extends AbstractBaseImpl implements GoodsService{
         curGoods.setGoodsSalesCount(goodsCro.getGoodsSalesCount());
         curGoods.setGoodsDetailText(goodsCro.getGoodsDetailText());
 
-        List<FilesRes> titleImgList = filesResService.saveFileRes(curGoods.getGoodsTitleImage());
-        List<FilesRes> detailImgList = filesResService.saveFileRes(curGoods.getGoodsDetailImage());
-
-        curGoods.setGoodsTitleImage(titleImgList);
-        curGoods.setGoodsDetailImage(detailImgList);
-
-        return goodsRepository.save(curGoods);
+        goodsMapper.updateGoods(curGoods);
     }
 }

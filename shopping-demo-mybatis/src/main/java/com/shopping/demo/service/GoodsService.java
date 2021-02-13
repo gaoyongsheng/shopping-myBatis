@@ -1,9 +1,9 @@
 package com.shopping.demo.service;
 
-import com.shopping.demo.cro.GoodsAllCro;
 import com.shopping.demo.cro.GoodsCro;
+import com.shopping.demo.cro.PageRequest;
+import com.shopping.demo.cro.PageResult;
 import com.shopping.demo.entity.Goods;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public interface GoodsService {
      * @Param [goodsCroList]
      * @return void
      */
-    void deleteListGoods(List<GoodsCro> goodsCroList);
+    void deleteListGoods(List<Long> goodsIdList);
 
     /**
      * @Author ldc
@@ -62,12 +62,14 @@ public interface GoodsService {
     
     /**
      * @Author ldc
-     * @Description //TODO 
+     * @Description //TODO
      * @Date 16:28 2020/12/7
      * @Param []
      * @return java.util.List<com.shopping.demo.entity.Goods>
      */
-    Page<Goods> findAllGoods(GoodsAllCro goodsAllCro);
+    PageResult findAllGoods(PageRequest pageRequest);
+
+    PageResult getGoodsByUserId(PageRequest pageRequest,Long userId);
 
     /**
      * @Author ldc
@@ -76,7 +78,7 @@ public interface GoodsService {
      * @Param [goodsCro]
      * @return com.shopping.demo.entity.Goods
      */
-    Goods editGoods(GoodsCro goodsCro);
+    void editGoods(GoodsCro goodsCro);
 
 
 }

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shopping.demo.mapper.GoodsMapper">
+
+    <!-- 新增单个商品 -->
+    <insert id="insertGoods" parameterType="Goods">
+        <!-- order="AFTER" 表示先执行插入语句，之后再执行查询语句 -->
+        <selectKey resultType="java.lang.Long" order="AFTER" keyColumn="id" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+        insert into goods (goodsName,goodsPrice,goodsInventoryCount,goodsSalesCount,goodsDetailText,goodsAddTime,goodsUserId)
+        values (#{goodsName},#{goodsPrice},#{goodsInventoryCount},#{goodsSalesCount},#{goodsDetailText},#{goodsAddTime},#{goodsUserId})
+    </insert>
+    
+    <!-- 批量新增商品 -->
+    <insert id="insertGoodsList" parameterType="Goods">
+        insert into goods (goodsName,goodsPrice,goodsInventoryCount,goodsSalesCount,goodsDetailText,goodsAddTime,goodsUserId)
+        values
+        <foreach collection="goodsList" item="goods" separator=",">
+            (#{goods.goodsName},#{goods.goodsPrice},#{goods.goodsInventoryCount},#{goods.goodsSalesCount},
+             #{goods.goodsDetailText},#{goods.goodsAddTime},#{goods.goodsUserId})
+        </foreach>
+    </insert>
+    <!-- 查找商品通过商品ID -->
+    <select id="getGoodsById" parameterType="Long" resultType="Goods">
+        <include refid="goodsFind"/> where id = #{id}
+    </select>
+    
+    <!-- 分页查找所有商品 -->
+    <select id="getGoods" resultType="Goods">
+        <include refid="goodsFind"/>
+    </select>
+    
+    <!-- 分页查找某个用户上传的所有商品 -->
+    <select id="getGoodsByUserId" parameterType="Long" resultType="Goods">
+        <include refid="goodsFind"/> where goodsUserId = #{goodsUserId}
+    </select>
+    
+    <!-- 修改商品 -->
+    <update id="updateGoods" parameterType="Goods">
+        update goods
+        <set>
+            <if test="goodsName != null and goodsName != ''">
+                goodsName = #{goodsName},
+            </if>
+            <if test="goodsPrice != null and goodsPrice != ''">
+                goodsPrice = #{goodsPrice},
+            </if>
+            <if test="goodsInventoryCount != null and goodsInventoryCount != ''">
+                goodsInventoryCount = #{goodsInventoryCount},
+            </if>
+            <if test="goodsSalesCount != null and goodsSalesCount != ''">
+                goodsSalesCount = #{goodsSalesCount},
+            </if>
+            <if test="goodsDetailText != null and goodsDetailText != ''">
+                goodsDetailText = #{goodsDetailText},
+            </if>
+            <if test="goodsAddTime != null and goodsAddTime != ''">
+                goodsAddTime = #{goodsAddTime},
+            </if>
+            <if test="goodsUserId != null and goodsUserId != ''">
+                goodsUserId = #{goodsUserId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    
+    <!-- 删除商品通过商品Id -->
+    <delete id="deleteGoodsById" parameterType="Long">
+        delete from goods where id = #{id}
+    </delete>
+    
+    <!-- 批量删除商品 -->
+    <delete id="deleteGoodsList">
+        delete from goods where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <!-- 声明sql片段 -->
+    <sql id="goodsFind">
+        select * from goods
+    </sql>
+
+</mapper>
